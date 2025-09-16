@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Welcome to Dashboard</h1>
+<p>Pilih dashboard yang ingin dibuka:</p>
+<ul>
+    <li><a href="{% url 'sales_index' %}">Sales Dashboard</a></li>
+    <li><a href="{% url 'bom_index' %}">BOM Dashboard</a></li>
+    <li><a href="{% url 'supplychain_index' %}">Supply Chain Dashboard</a></li>
+    <li><a href="{% url 'finance_index' %}">Finance Dashboard</a></li>
+    <li><a href="{% url 'humancapital_index' %}">Human Capital Dashboard</a></li>
+    <li><a href="{% url 'crm_index' %}">CRM Dashboard</a></li>
+    <li><a href="{% url 'analytics_index' %}">Analytics Dashboard</a></li>
+</ul>
+<p><a href="{% url 'admin:index' %}">Go to Admin Panel</a></p>
+{% endblock %}

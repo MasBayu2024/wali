@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Dashboard{% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --sidebar-width: 220px;
+      --bg: #f8fafc;
+      --card-bg: #fff;
+      --text: #111827;
+      --muted: #6b7280;
+      --sidebar-bg: #1f2937;
+      --sidebar-link: #d1d5db;
+      --accent: #0d6efd;
+    }
+
+    /* Dark mode variables */
+    .dark-mode {
+      --bg: #0b1220;
+      --card-bg: #0f1724;
+      --text: #e6eef8;
+      --muted: #9aa6b2;
+      --sidebar-bg: #0b1220;
+      --sidebar-link: #cbd5e1;
+      --accent: #66b2ff;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: row;
+      background: var(--bg);
+      color: var(--text);
+      transition: background .2s, color .2s;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: var(--sidebar-bg);
+      color: var(--sidebar-link);
+      padding-top: 1rem;
+      transition: transform .2s ease, background .2s;
+    }
+    .sidebar .nav-link {
+      color: var(--sidebar-link);
+      padding: .6rem 1rem;
+    }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      border-radius: .25rem;
+    }
+    .sidebar .brand {
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: .5rem 1rem;
+      display:block;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* Content area */
+    .content {
+      margin-left: var(--sidebar-width);
+      width: calc(100% - var(--sidebar-width));
+      padding: 1.5rem;
+    }
+
+    /* Card adjustments */
+    .card {
+      background: var(--card-bg);
+      border: none;
+      color: var(--text);
+      transition: background .2s, color .2s;
+    }
+    .text-muted {
+      color: var(--muted) !important;
+    }
+
+    /* Toggle button */
+    .theme-toggle {
+      border: none;
+      background: transparent;
+      color: var(--text);
+    }
+
+    /* Responsive: collapse sidebar on small screens */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 1030;
+      }
+      .sidebar.show {
+        transform: translateX(0);
+      }
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .backdrop {
+        display: none;
+      }
+      .backdrop.show {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.3);
+        z-index: 1020;
+      }
+    }
+  </style>
+</head>
+<body id="pageBody">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <a href="/" class="brand d-flex align-items-center mb-3">
+      <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
+    </a>
+
+    <nav class="nav flex-column px-2">
+      <a class="nav-link d-flex align-items-center" href="{% url 'sales_index' %}">
+        <i class="fa-solid fa-chart-line me-2"></i> Sales
+      </a>
+      <a class="nav-link d-flex align-items-center" href="{% url 'bom_index' %}">
+        <i class="fa-solid fa-boxes-stacked me-2"></i> BOM
+      </a>
+    </nav>
+
+    <!-- bottom area: theme toggle (desktop) -->
+    <div class="px-3 mt-auto mb-3">
+      <button id="desktopThemeToggle" class="theme-toggle w-100 d-flex align-items-center justify-content-start">
+        <i id="desktopThemeIcon" class="fa-regular fa-moon me-2"></i>
+        <span>Toggle Dark</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Backdrop for small screens -->
+  <div id="backdrop" class="backdrop"></div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- Top navbar for mobile (shows toggle) -->
+    <nav class="navbar navbar-light bg-white mb-3 shadow-sm d-md-none">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <button class="btn btn-outline-secondary me-2" id="menuToggle" type="button">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="navbar-brand ms-1">Dashboard</span>
+        </div>
+
+        <div class="d-flex align-items-center">
+          <!-- mobile theme toggle -->
+          <button id="mobileThemeToggle" class="btn btn-sm btn-outline-secondary" type="button" aria-label="Toggle theme">
+            <i id="mobileThemeIcon" class="fa-regular fa-moon"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Sidebar mobile controls
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+
+    function openSidebar() {
+      sidebar.classList.add('show');
+      backdrop.classList.add('show');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('show');
+      backdrop.classList.remove('show');
+    }
+
+    if (menuToggle) {
+      menuToggle.addEventListener('click', () => {
+        if (sidebar.classList.contains('show')) closeSidebar(); else openSidebar();
+      });
+    }
+    if (backdrop) {
+      backdrop.addEventListener('click', closeSidebar);
+    }
+
+    // Active link detection
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+      try {
+        if (link.href === window.location.href || window.location.href.includes(link.getAttribute('href'))) {
+          link.classList.add('active');
+        }
+      } catch(e){}
+    });
+
+    // Dark mode toggle (persist via localStorage)
+    const pageBody = document.getElementById('pageBody');
+    const mobileToggle = document.getElementById('mobileThemeToggle');
+    const desktopToggle = document.getElementById('desktopThemeToggle');
+    const mobileIcon = document.getElementById('mobileThemeIcon');
+    const desktopIcon = document.getElementById('desktopThemeIcon');
+
+    const THEME_KEY = 'dashboard_theme'; // 'dark' or 'light'
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        pageBody.classList.add('dark-mode');
+        if (mobileIcon) { mobileIcon.className = 'fa-solid fa-sun'; }
+        if (desktopIcon) { desktopIcon.className = 'fa-solid fa-sun'; }
+      } else {
+        pageBody.classList.remove('dark-mode');
+        if (mobileIcon) { mobileIcon.className = 'fa-regular fa-moon'; }
+        if (desktopIcon) { desktopIcon.className = 'fa-regular fa-moon'; }
+      }
+    }
+
+    // load saved preference or system preference (first-time)
+    (function initTheme(){
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved) {
+        applyTheme(saved);
+      } else {
+        // respect system preference
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(prefersDark ? 'dark' : 'light');
+      }
+    })();
+
+    function toggleTheme() {
+      const isDark = pageBody.classList.contains('dark-mode');
+      const newTheme = isDark ? 'light' : 'dark';
+      applyTheme(newTheme);
+      localStorage.setItem(THEME_KEY, newTheme);
+    }
+
+    if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+    if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
+  </script>
+</body>
+</html>

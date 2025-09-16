@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h1 class="h3 mb-0">Selamat Datang di Dashboard 🎉</h1>
+        <small class="text-muted">Pilih menu dari sidebar atau tombol di bawah</small>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-3">
+      <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fa-solid fa-chart-line fs-2 text-primary me-3"></i>
+              <h5 class="card-title mb-0">Sales Dashboard</h5>
+            </div>
+            <p class="card-text flex-grow-1 text-muted">Lihat laporan penjualan, target, dan performa tim sales.</p>
+            <div>
+              <a href="{% url 'sales_index' %}" class="btn btn-primary">Buka Sales</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fa-solid fa-boxes-stacked fs-2 text-success me-3"></i>
+              <h5 class="card-title mb-0">BOM Dashboard</h5>
+            </div>
+            <p class="card-text flex-grow-1 text-muted">Kelola Bill of Materials, komponen, dan struktur produk.</p>
+            <div>
+              <a href="{% url 'bom_index' %}" class="btn btn-success">Buka BOM</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
