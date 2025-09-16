@@ -1,6 +1,25 @@
 {% extends 'base.html' %}
 {% block title %}Home{% endblock %}
 {% block content %}
-  <h2>Selamat datang</h2>
-  <p>Klik Person di menu untuk melihat data.</p>
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h1 class="h4 mb-0">Selamat Datang di Dashboard</h1>
+        <small class="text-muted">Total person: {{ person_count }}</small>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-3">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title"><i class="fa-solid fa-user me-2"></i> Person</h5>
+            <p class="card-text text-muted">Kelola daftar person. Klik untuk melihat semua.</p>
+            <a href="{% url 'person_list' %}" class="btn btn-primary">Lihat Person</a>
+          </div>
+        </div>
+      </div>
+      <!-- add other cards as needed -->
+    </div>
+  </div>
 {% endblock %}
